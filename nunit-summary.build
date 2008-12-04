@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<project name="NUnitSummary" default="build" basedir=".">
+
+  <property name="debug" value="false"/>
+
+  <property name="build.defines" value="TRACE" unless="${debug}"/>
+  <property name="build.defines" value="TRACE;DEBUG" if="${debug}"/>
+
+  <property name="build.config" value="Debug" if="${debug}"/>
+  <property name="build.config" value="Release" unless="${debug}"/>
+
+  <property name="build.dir" value="bin"/>
+
+  <patternset id="source-files">
+    <include name="Properties/AssemblyInfo.cs"/>
+    <include name="Properties/Resources.Designer.cs"/>
+    <include name="XmlTransformer.cs"/>
+    <include name="XmlTransformerOptions.cs"/>
+  </patternset>
+
+  <patternset id="resource-files">
+    <include name="Transforms/DefaultTransform.xslt"/>
+    <include name="Transforms/HtmlTransform.xslt"/>
+    <include name="Transforms/BriefSummary.xslt"/>
+    <include name="Transforms/HtmlSummary.xslt"/>
+  </patternset>
+
+  <target name="clean">
+    <delete>
+      <fileset basedir="${build.dir}">
+        <include name="GenSyntax.*"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="build">
+
+    <mkdir dir="${build.dir}"/>
+
+    <echo message="Building ${build.config} configuration under ${nant.settings.currentframework}" />
+
+    <csc target="exe"
+        output="${build.dir}/nunit-summary.exe"
+        debug="${debug}" 
+        define="${build.defines}">
+      <sources basedir=".">
+        <patternset refid="source-files"/>
+      </sources>
+      <resources prefix="NUnit.Extras.Transforms">
+        <patternset refid="resource-files"/>
+      </resources>
+    </csc>
+
+  </target>
+
+</project>
