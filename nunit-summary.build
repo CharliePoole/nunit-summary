@@ -12,8 +12,7 @@
   <property name="build.dir" value="bin"/>
 
   <patternset id="source-files">
-    <include name="Properties/AssemblyInfo.cs"/>
-    <include name="Properties/Resources.Designer.cs"/>
+    <include name="AssemblyInfo.cs"/>
     <include name="XmlTransformer.cs"/>
     <include name="XmlTransformerOptions.cs"/>
   </patternset>
@@ -43,7 +42,7 @@
         output="${build.dir}/nunit-summary.exe"
         debug="${debug}" 
         define="${build.defines}">
-      <sources basedir=".">
+      <sources basedir=".">s
         <patternset refid="source-files"/>
       </sources>
       <resources prefix="NUnit.Extras.Transforms">

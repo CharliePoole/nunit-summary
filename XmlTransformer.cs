@@ -16,7 +16,7 @@ namespace NUnit.Extras
 		[STAThread]
 		static void Main(string[] args)
 		{
-            Console.Error.WriteLine("nunit-summary version 0.2 - Copyright (c) 2007-2008, Charlie Poole");
+            Console.Error.WriteLine("nunit-summary version 0.3 - Copyright (c) 2007-2009, Charlie Poole");
             Console.Error.WriteLine();
 
             XmlTransformerOptions options = new XmlTransformerOptions(args);

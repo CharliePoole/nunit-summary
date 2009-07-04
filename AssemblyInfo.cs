@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NUnitTransform")]
+[assembly: AssemblyTitle("nunit-summary")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NUnitTransform")]
-[assembly: AssemblyCopyright("Copyright ©  2007")]
+[assembly: AssemblyProduct("nunit-summary")]
+[assembly: AssemblyCopyright("Copyright ©  2007-2009, Charlie Poole")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.3")]
+[assembly: AssemblyFileVersion("0.3")]
