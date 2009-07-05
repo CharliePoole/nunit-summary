@@ -1,4 +1,10 @@
-﻿using System.Reflection;
+﻿// *****************************************************
+// Copyright 2007-2009, Charlie Poole
+//
+// Licensed under the Open Software License version 3.0
+// *****************************************************
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
