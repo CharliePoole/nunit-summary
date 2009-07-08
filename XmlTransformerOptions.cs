@@ -20,7 +20,7 @@ namespace NUnit.Extras
         bool noheader = false;
         bool html = false;
         bool brief = false;
-       
+
         List<string> inputFiles = new List<string>();
 
         string transformFile = null;
@@ -28,21 +28,30 @@ namespace NUnit.Extras
 
         bool multipleOutput = false;
 
-        public XmlTransformerOptions( string[] args )
+        public XmlTransformerOptions(string[] args)
         {
             if (Path.DirectorySeparatorChar == '\\')
                 optionChars += "/";
 
-            foreach (string arg in args)
-                if (optionChars.IndexOf(arg[0]) >= 0)
-                    processOption( arg );
-                else if( IsWildCardPattern( arg ) )
-                    processWildCardPattern( arg );
-                else
-                    inputFiles.Add( arg );
+            try
+            {
+                foreach (string arg in args)
+                    if (optionChars.IndexOf(arg[0]) >= 0)
+                        processOption(arg);
+                    else if (IsWildCardPattern(arg))
+                        processWildCardPattern(arg);
+                    else
+                        inputFiles.Add(arg);
 
-            if (inputFiles.Count == 0)
-                inputFiles.Add("TestResult.xml");
+                if (inputFiles.Count == 0)
+                    inputFiles.Add("TestResult.xml");
+            }
+            catch (XmlTransformerOptionsException xcp)
+            {
+                Console.Error.WriteLine(xcp.Message);
+                error = true;
+                usage();
+            }
         }
 
         private void processOption(string arg)
@@ -77,10 +86,7 @@ namespace NUnit.Extras
                     brief = true;
                     break;
                 default:
-                    Console.Error.WriteLine("Invalid option: {0}", arg);
-                    error=true;
-                    usage();
-                    break;
+                    throw new XmlTransformerOptionsException(String.Format("Invalid option: {0}", arg));
             }
         }
 
@@ -91,9 +97,9 @@ namespace NUnit.Extras
             if (dir == "") dir = Environment.CurrentDirectory;
             string name = Path.GetFileName(arg);
 
-            if( IsWildCardPattern( dir ) )
-                processWildCardPattern( name, dir.Split(
-                    new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }) );
+            if (IsWildCardPattern(dir))
+                processWildCardPattern(name, dir.Split(
+                    new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }));
             else
                 foreach (string file in Directory.GetFiles(dir, name))
                     inputFiles.Add(file);
@@ -132,7 +138,7 @@ namespace NUnit.Extras
                     string temp = d;
                     for (int index = count + 1; index < parts.Length; index++)
                         temp = Path.Combine(temp, parts[index]);
-                    if( Directory.Exists( temp ) )
+                    if (Directory.Exists(temp))
                         processWildCardPattern(Path.Combine(temp, name));
                 }
             }
@@ -192,12 +198,12 @@ namespace NUnit.Extras
 
         void usage()
         {
-            Console.Error.WriteLine("Usage is: nunit-transform inputFile [options]" );
+            Console.Error.WriteLine("Usage is: nunit-transform inputFile [options]");
             Console.Error.WriteLine();
             Console.Error.WriteLine("  inputFile           The absolute or relative path to an input file to be");
-            Console.Error.WriteLine("                      to be processed. Multiple files may be specified and" );
+            Console.Error.WriteLine("                      to be processed. Multiple files may be specified and");
             Console.Error.WriteLine("                      wildcard specifications may be used in either the name");
-            Console.Error.WriteLine("                      of the file or the directory path. A directory specified" );
+            Console.Error.WriteLine("                      of the file or the directory path. A directory specified");
             Console.Error.WriteLine("                      as '**' represents all directories to any depth.");
             Console.Error.WriteLine();
             Console.Error.WriteLine("  -xsl=transform      Specify xsl transform to use. If not specified, an");
@@ -206,9 +212,9 @@ namespace NUnit.Extras
             Console.Error.WriteLine("                      gives the same output as nunit-console.");
             Console.Error.WriteLine();
             Console.Error.WriteLine("  -out=outputFile     Define the output file. If missing, output is written to");
-            Console.Error.WriteLine("  -o=outputFile       standard output. When multiple input files are processed," );
-            Console.Error.WriteLine("                      the output basename may be specified as '*' to create" );
-            Console.Error.WriteLine("                      a separate output file for each input using the basename" );
+            Console.Error.WriteLine("  -o=outputFile       standard output. When multiple input files are processed,");
+            Console.Error.WriteLine("                      the output basename may be specified as '*' to create");
+            Console.Error.WriteLine("                      a separate output file for each input using the basename");
             Console.Error.WriteLine("                      of the corresponding input file.");
             Console.Error.WriteLine();
             Console.Error.WriteLine("                      If the extension of the output file is html or htm, the");
@@ -229,6 +235,14 @@ namespace NUnit.Extras
             Console.Error.WriteLine("  nunit-summary TestResult*.xml -brief -o=latest.txt");
             Console.Error.WriteLine("  nunit-summary TestResult*.xml -out=*.html -xsl=MySummary.xsl");
             Console.Error.WriteLine("  nunit-summary **/TestResult*.xml -out=allplatforms.txt");
+        }
+    }
+
+    internal class XmlTransformerOptionsException : Exception
+    {
+        public XmlTransformerOptionsException(string message)
+            : base(message)
+        {
         }
     }
 }
