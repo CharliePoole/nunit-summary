@@ -62,10 +62,18 @@ namespace NUnit.Extras
             switch (opt[0])
             {
                 case "xsl":
+                    if (opt.Length != 2)
+                    {
+                        throw new XmlTransformerOptionsException("You must specify a file name for -xsl option!");
+                    }
                     transformFile = opt[1];
                     break;
                 case "o":
                 case "out":
+                    if (opt.Length != 2)
+                    {
+                        throw new XmlTransformerOptionsException("You must specify a file name for -out option!");
+                    }
                     outputFile = opt[1];
                     multipleOutput = Path.GetFileNameWithoutExtension(outputFile) == "*";
                     string ext = Path.GetExtension(outputFile);
