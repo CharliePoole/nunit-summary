@@ -1,5 +1,5 @@
 // *****************************************************
-// Copyright 2007-2009, Charlie Poole
+// Copyright 2007-2016, Charlie Poole
 //
 // Licensed under the Open Software License version 3.0
 // *****************************************************
@@ -22,7 +22,7 @@ namespace NUnit.Extras
 		[STAThread]
 		static void Main(string[] args)
 		{
-            Console.Error.WriteLine("nunit-summary version 0.3 - Copyright (c) 2007-2009, Charlie Poole");
+            Console.Error.WriteLine("nunit-summary version 0.4 - Copyright (c) 2007-2016, Charlie Poole");
             Console.Error.WriteLine();
 
             XmlTransformerOptions options = new XmlTransformerOptions(args);
