@@ -28,25 +28,13 @@ namespace NUnit.Extras
 {
     class XmlTransformerOptions
     {
-        string optionChars = "-";
-
-        bool error = false;
-        bool help = false;
-        bool noheader = false;
-        bool html = false;
-        bool brief = false;
-
-        List<string> inputFiles = new List<string>();
-
-        string transformFile = null;
-        string outputFile = null;
-
-        bool multipleOutput = false;
-
         public XmlTransformerOptions(string[] args)
         {
-            if (Path.DirectorySeparatorChar == '\\')
-                optionChars += "/";
+            Input = new List<string>();
+
+            var optionChars = Path.DirectorySeparatorChar == '\\'
+                ? "-/"
+                : "-";
 
             try
             {
@@ -56,15 +44,15 @@ namespace NUnit.Extras
                     else if (IsWildCardPattern(arg))
                         processWildCardPattern(arg);
                     else
-                        inputFiles.Add(arg);
+                        Input.Add(arg);
 
-                if (inputFiles.Count == 0)
-                    inputFiles.Add("TestResult.xml");
+                if (Input.Count == 0)
+                    Input.Add("TestResult.xml");
             }
             catch (XmlTransformerOptionsException xcp)
             {
                 Console.Error.WriteLine(xcp.Message);
-                error = true;
+                Error = true;
                 usage();
             }
         }
@@ -81,7 +69,7 @@ namespace NUnit.Extras
                     {
                         throw new XmlTransformerOptionsException("You must specify a file name for -xsl option!");
                     }
-                    transformFile = opt[1];
+                    Transform = opt[1];
                     break;
                 case "o":
                 case "out":
@@ -89,24 +77,24 @@ namespace NUnit.Extras
                     {
                         throw new XmlTransformerOptionsException("You must specify a file name for -out option!");
                     }
-                    outputFile = opt[1];
-                    multipleOutput = Path.GetFileNameWithoutExtension(outputFile) == "*";
-                    string ext = Path.GetExtension(outputFile);
+                    Output = opt[1];
+                    MultipleOutput = Path.GetFileNameWithoutExtension(Output) == "*";
+                    string ext = Path.GetExtension(Output);
                     if (ext == ".html" || ext == ".htm")
-                        html = true;
+                        Html = true;
                     break;
                 case "help":
                     usage();
-                    help = true;
+                    Help = true;
                     break;
                 case "noheader":
-                    noheader = true;
+                    NoHeader = true;
                     break;
                 case "html":
-                    html = true;
+                    Html = true;
                     break;
                 case "brief":
-                    brief = true;
+                    Brief = true;
                     break;
                 default:
                     throw new XmlTransformerOptionsException(String.Format("Invalid option: {0}", arg));
@@ -125,7 +113,7 @@ namespace NUnit.Extras
                     new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }));
             else
                 foreach (string file in Directory.GetFiles(dir, name))
-                    inputFiles.Add(file);
+                    Input.Add(file);
         }
 
         private void processWildCardPattern(string name, string[] parts)
@@ -174,50 +162,23 @@ namespace NUnit.Extras
             return name.IndexOfAny(new char[] { '*', '?' }) >= 0;
         }
 
-        public bool Error
-        {
-            get { return error; }
-        }
+        public bool Error { get; private set; }
 
-        public bool Help
-        {
-            get { return help; }
-        }
+        public bool Help { get; private set; }
 
-        public bool Html
-        {
-            get { return html; }
-        }
+        public bool Html { get; private set; }
 
-        public bool MultipleOutput
-        {
-            get { return multipleOutput; }
-        }
+        public bool MultipleOutput { get; private set; }
 
-        public bool NoHeader
-        {
-            get { return noheader; }
-        }
+        public bool NoHeader { get; private set; }
 
-        public ICollection<string> Input
-        {
-            get { return inputFiles; }
-        }
+        public ICollection<string> Input { get; private set; }
 
-        public string Output
-        {
-            get { return outputFile; }
-        }
+        public string Output { get; private set; }
 
-        public string Transform
-        {
-            get { return transformFile; }
-        }
+        public string Transform { get; private set; }
 
-        public bool Brief
-        {
-            get { return brief; }
-        }
+        public bool Brief { get; private set; }
 
         void usage()
         {
