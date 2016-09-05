@@ -28,6 +28,8 @@ namespace NUnit.Extras
 {
     class XmlTransformerOptions
     {
+        #region Constructor
+
         public XmlTransformerOptions(string[] args)
         {
             Input = new List<string>();
@@ -40,9 +42,9 @@ namespace NUnit.Extras
             {
                 foreach (string arg in args)
                     if (optionChars.IndexOf(arg[0]) >= 0)
-                        processOption(arg);
+                        ProcessOption(arg);
                     else if (IsWildCardPattern(arg))
-                        processWildCardPattern(arg);
+                        ProcessWildCardPattern(arg);
                     else
                         Input.Add(arg);
 
@@ -53,11 +55,37 @@ namespace NUnit.Extras
             {
                 Console.Error.WriteLine(xcp.Message);
                 Error = true;
-                usage();
+                Usage();
             }
         }
 
-        private void processOption(string arg)
+        #endregion
+
+        #region Properties
+
+        public bool Error { get; private set; }
+
+        public bool Help { get; private set; }
+
+        public bool Html { get; private set; }
+
+        public bool MultipleOutput { get; private set; }
+
+        public bool NoHeader { get; private set; }
+
+        public ICollection<string> Input { get; private set; }
+
+        public string Output { get; private set; }
+
+        public string Transform { get; private set; }
+
+        public bool Brief { get; private set; }
+
+        #endregion
+
+        #region Helper Methods
+
+        private void ProcessOption(string arg)
         {
             string option = arg.Substring(1);
             string[] opt = option.Split(new char[] { '=' });
@@ -84,7 +112,7 @@ namespace NUnit.Extras
                         Html = true;
                     break;
                 case "help":
-                    usage();
+                    Usage();
                     Help = true;
                     break;
                 case "noheader":
@@ -101,7 +129,7 @@ namespace NUnit.Extras
             }
         }
 
-        private void processWildCardPattern(string arg)
+        private void ProcessWildCardPattern(string arg)
         {
 
             string dir = Path.GetDirectoryName(arg);
@@ -109,14 +137,14 @@ namespace NUnit.Extras
             string name = Path.GetFileName(arg);
 
             if (IsWildCardPattern(dir))
-                processWildCardPattern(name, dir.Split(
+                ProcessWildCardPattern(name, dir.Split(
                     new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }));
             else
                 foreach (string file in Directory.GetFiles(dir, name))
                     Input.Add(file);
         }
 
-        private void processWildCardPattern(string name, string[] parts)
+        private void ProcessWildCardPattern(string name, string[] parts)
         {
             int count = 0;
             string dir = "";
@@ -150,11 +178,11 @@ namespace NUnit.Extras
                     for (int index = count + 1; index < parts.Length; index++)
                         temp = Path.Combine(temp, parts[index]);
                     if (Directory.Exists(temp))
-                        processWildCardPattern(Path.Combine(temp, name));
+                        ProcessWildCardPattern(Path.Combine(temp, name));
                 }
             }
             else
-                processWildCardPattern(Path.Combine(dir, name));
+                ProcessWildCardPattern(Path.Combine(dir, name));
         }
 
         private bool IsWildCardPattern(string name)
@@ -162,25 +190,7 @@ namespace NUnit.Extras
             return name.IndexOfAny(new char[] { '*', '?' }) >= 0;
         }
 
-        public bool Error { get; private set; }
-
-        public bool Help { get; private set; }
-
-        public bool Html { get; private set; }
-
-        public bool MultipleOutput { get; private set; }
-
-        public bool NoHeader { get; private set; }
-
-        public ICollection<string> Input { get; private set; }
-
-        public string Output { get; private set; }
-
-        public string Transform { get; private set; }
-
-        public bool Brief { get; private set; }
-
-        void usage()
+        private void Usage()
         {
             Console.Error.WriteLine("Usage is: nunit-transform inputFile [options]");
             Console.Error.WriteLine();
@@ -220,6 +230,8 @@ namespace NUnit.Extras
             Console.Error.WriteLine("  nunit-summary TestResult*.xml -out=*.html -xsl=MySummary.xsl");
             Console.Error.WriteLine("  nunit-summary **/TestResult*.xml -out=allplatforms.txt");
         }
+        
+        #endregion
     }
 
     internal class XmlTransformerOptionsException : Exception
