@@ -60,20 +60,30 @@
     <Compile Include="XmlTransformer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Transforms\BriefSummary.xslt" />
+    <EmbeddedResource Include="Transforms\BriefSummary-v2.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Transforms\DefaultTransform.xslt" />
-    <EmbeddedResource Include="Transforms\HtmlSummary.xslt" />
-    <EmbeddedResource Include="Transforms\HtmlTransform.xslt" />
+    <EmbeddedResource Include="Transforms\DefaultTransform-v2.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Transforms\HtmlSummary-v2.xslt" />
+    <EmbeddedResource Include="Transforms\HtmlTransform-v2.xslt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Transforms\DefaultTransform-v3.xslt" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Transforms\BriefSummary-v3.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Transforms\HtmlSummary-v3.xslt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
