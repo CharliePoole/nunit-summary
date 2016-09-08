@@ -109,9 +109,6 @@ namespace NUnit.Extras
 
                 if (!options.MultipleOutput)
                 {
-                    if ( options.Html && !options.NoHeader )
-                        WriteHtmlTrailer(output);
-
                     if (options.Output != null)
                     {
                         Console.Error.WriteLine("Output saved as {0}", Path.GetFullPath( options.Output ) );
