@@ -64,14 +64,14 @@ namespace NUnit.Extras
 
                     if (options.Brief)
                         if (options.Html)
-                            transform = "HtmlSummary.xslt";
+                            transform = "HtmlSummary-v2.xslt";
                         else
-                            transform = "BriefSummary.xslt";
+                            transform = "BriefSummary-v2.xslt";
                     else
                         if (options.Html)
-                            transform = "HtmlTransform.xslt";
+                            transform = "HtmlTransform-v2.xslt";
                         else
-                            transform = "DefaultTransform.xslt";
+                            transform = "DefaultTransform-v2.xslt";
 
                     Assembly assembly = Assembly.GetExecutingAssembly();
                     Stream stream = assembly.GetManifestResourceStream("NUnit.Extras.Transforms." + transform);
