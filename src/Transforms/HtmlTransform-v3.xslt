@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:preserve-space elements="*" />
-  <xsl:output omit-xml-declaration="yes" indent="yes" encoding="UTF-8" />
+  <xsl:output omit-xml-declaration="yes" indent="yes" />
   <xsl:template match="/">
     <style type="text/css">
 
@@ -33,11 +33,16 @@
 
     </style>
     <xsl:apply-templates/>
-
   </xsl:template>
 
   <xsl:template match="test-run">
 
+    <!-- Command Line -->
+    <h4>Command Line</h4>
+    <pre>
+      <xsl:value-of select="command-line"/>
+    </pre>
+    
     <!-- Runtime Environment -->
     <h4>Runtime Environment</h4>
 
@@ -66,6 +71,64 @@
         </td>
       </tr>
     </table>
+
+    <!-- Test Files -->
+    <div id="testfiles">
+      <h4>Test Files</h4>
+      <xsl:if test="count(test-suite[@type='Assembly']) > 0">
+        <ol>
+          <xsl:for-each select="test-suite[@type='Assembly']">
+            <li>
+              <xsl:value-of select="@fullname"/>
+            </li>
+          </xsl:for-each>
+        </ol>
+      </xsl:if>
+    </div>
+
+    <!-- Tests Not Run -->
+    <xsl:if test="//test-case[@result='Skipped']">
+      <h4>Tests Not Run</h4>
+      <ol>
+        <xsl:apply-templates select="//test-case[@result='Skipped']"/>
+      </ol>
+    </xsl:if>
+
+    <!-- Errors and Failures -->
+    <xsl:if test="//test-case[failure]">
+      <h4>Errors and Failures</h4>
+      <ol>
+        <xsl:apply-templates select="//test-case[failure]"/>
+      </ol>
+    </xsl:if>
+
+    <!-- Run Settings (gets first one found) -->
+    <xsl:variable name="settings" select ="//settings[1]" />
+
+    <h4>Run Settings</h4>
+    <ul>
+      <li>
+        DefaultTimeout: <xsl:value-of select="$settings/setting[@name='DefaultTimeout']/@value"/>
+      </li>
+      <li>
+        WorkDirectory: <xsl:value-of select="$settings/setting[@name='WorkDirectory']/@value"/>
+      </li>
+      <li>
+        ImageRuntimeVersion: <xsl:value-of select="$settings/setting[@name='ImageRuntimeVersion']/@value"/>
+      </li>
+      <li>
+        ImageTargetFrameworkName: <xsl:value-of select="$settings/setting[@name='ImageTargetFrameworkName']/@value"/>
+      </li>
+      <li>
+        ImageRequiresX86: <xsl:value-of select="$settings/setting[@name='ImageRequiresX86']/@value"/>
+      </li>
+      <li>
+        ImageRequiresDefaultAppDomainAssemblyResolver: <xsl:value-of select="$settings/setting[@name='ImageRequiresDefaultAppDomainAssemblyResolver']/@value"/>
+      </li>
+      <li>
+        NumberOfTestWorkers: <xsl:value-of select="$settings/setting[@name='NumberOfTestWorkers']/@value"/>
+      </li>
+    </ul>
 
     <h4>Test Run Summary</h4>
     <table id="summary" class="collapsed">
@@ -128,7 +191,60 @@
         </td>
       </tr>
     </table>
-   
+  </xsl:template>
+
+  <xsl:template match="test-case">
+    <!-- Determine type of test-case for formatting -->
+    <xsl:variable name="type">
+      <xsl:choose>
+        <xsl:when test="@result='Skipped'">
+          <xsl:choose>
+            <xsl:when test="@label='Ignored' or @label='Explicit'">
+              <xsl:value-of select="@label"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="'Other'"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:when test="@result='Failed'">
+          <xsl:choose>
+            <xsl:when test="@label='Error' or @label='Invalid'">
+              <xsl:value-of select="@label"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="'Failed'"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="'Unknown'"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <!-- Show details of test-cases either skipped or errored -->
+    <li>
+      <pre>
+        <xsl:value-of select="concat($type,' : ', @fullname)" />
+        <br/>
+        <xsl:value-of select="child::node()/message"/>
+
+        <xsl:choose>
+          <xsl:when test="$type='Failed'">
+            <br/>
+          </xsl:when>
+          <xsl:when test="$type='Error'">
+            <br/>
+          </xsl:when>
+        </xsl:choose>
+
+        <!-- Stack trace for failures -->
+        <xsl:if test="failure and ($type='Failed' or $type='Error')">
+          <xsl:value-of select="failure/stack-trace"/>
+        </xsl:if>
+      </pre>
+    </li>
   </xsl:template>
 
 </xsl:stylesheet>
