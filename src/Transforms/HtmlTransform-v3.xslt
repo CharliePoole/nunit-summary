@@ -37,6 +37,12 @@
 
   <xsl:template match="test-run">
 
+    <!-- Command Line -->
+    <h4>Command Line</h4>
+    <pre>
+      <xsl:value-of select="command-line"/>
+    </pre>
+    
     <!-- Runtime Environment -->
     <h4>Runtime Environment</h4>
 
