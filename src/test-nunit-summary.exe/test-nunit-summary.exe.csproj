@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="DefaultHtmlOutputTests.cs" />
     <Compile Include="BriefHtmlOutputTests.cs" />
-    <Compile Include="XmlTransformerTests.cs" />
+    <Compile Include="ReportCreationTests.cs" />
     <Compile Include="DefaultTextOutputTests.cs" />
     <Compile Include="BriefTextOutputTests.cs" />
     <Compile Include="Program.cs" />
@@ -68,6 +68,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BriefHtmlOutput_ExpectedReport.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Program.vb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

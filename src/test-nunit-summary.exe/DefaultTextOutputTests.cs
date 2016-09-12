@@ -24,7 +24,7 @@ using NUnit.Framework;
 
 namespace NUnit.Extras.Tests
 {
-    public class DefaultTextOutputTests : XmlTransformerTests
+    public class DefaultTextOutputTests : ReportCreationTests
     {
         protected override string Input
         {
@@ -41,41 +41,35 @@ namespace NUnit.Extras.Tests
             get { return ""; }
         }
 
-        static TestCaseData[] ExpectedLines = new TestCaseData[]
+        static TestCaseData[] ExpectedText = new TestCaseData[]
         {
-            new TestCaseData(0, @"***** C:\Program Files\NUnit 2.6.4\bin\tests\mock-assembly.dll"),
-            new TestCaseData(1, ""),
-            new TestCaseData(2, "NUnit Version 2.6.4.14350  2016-09-10  11:13:55"),
-            new TestCaseData(3, ""),
-            new TestCaseData(4, "Runtime Environment -"),
-            new TestCaseData(5, "   OS Version: Microsoft Windows NT 6.2.9200.0"),
-            new TestCaseData(6, "  CLR Version: " + Environment.Version),
-            new TestCaseData(7, ""),
-            new TestCaseData(8, "Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds"),
-            new TestCaseData(9, "  Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0"),
-            new TestCaseData(10, ""),
-            new TestCaseData(11, "Failures:"),
-            new TestCaseData(12, "1) NUnit.Tests.Assemblies.MockTestFixture.FailingTest : Intentional failure"),
-            new TestCaseData(13, "at NUnit.Tests.Assemblies.MockTestFixture.FailingTest()"),
-            new TestCaseData(14, ""),
-            new TestCaseData(15, "2) NUnit.Tests.Assemblies.MockTestFixture.TestWithException : System.ApplicationException : Intentional Exception"),
-            new TestCaseData(16, "at NUnit.Tests.Assemblies.MockTestFixture.MethodThrowsException()"),
-            new TestCaseData(17, "at NUnit.Tests.Assemblies.MockTestFixture.TestWithException()"),
-            new TestCaseData(18, ""),
-            new TestCaseData(19, "Tests not run:"),
-            new TestCaseData(20, "1) NUnit.Tests.Assemblies.MockTestFixture.MockTest4 : ignoring this test method for now"),
-            new TestCaseData(21, "2) NUnit.Tests.Assemblies.MockTestFixture.MockTest5 : Method is not public"),
-            new TestCaseData(22, "3) NUnit.Tests.Assemblies.MockTestFixture.NotRunnableTest : No arguments were provided"),
-            new TestCaseData(23, "4) NUnit.Tests.BadFixture.SomeTest : No suitable constructor was found"),
-            new TestCaseData(24, "5) NUnit.Tests.IgnoredFixture.Test1 : "),
-            new TestCaseData(25, "6) NUnit.Tests.IgnoredFixture.Test2 : "),
-            new TestCaseData(26, "7) NUnit.Tests.IgnoredFixture.Test3 : ")
+            new TestCaseData(@"***** C:\Program Files\NUnit 2.6.4\bin\tests\mock-assembly.dll"),
+            new TestCaseData("NUnit Version 2.6.4.14350  2016-09-10  11:13:55"),
+            new TestCaseData("Runtime Environment -"),
+            new TestCaseData("   OS Version: Microsoft Windows NT 6.2.9200.0"),
+            new TestCaseData("  CLR Version: " + Environment.Version),
+            new TestCaseData("Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds"),
+            new TestCaseData("  Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0"),
+            new TestCaseData("Failures:"),
+            new TestCaseData("1) NUnit.Tests.Assemblies.MockTestFixture.FailingTest : Intentional failure"),
+            new TestCaseData("at NUnit.Tests.Assemblies.MockTestFixture.FailingTest()"),
+            new TestCaseData("2) NUnit.Tests.Assemblies.MockTestFixture.TestWithException : System.ApplicationException : Intentional Exception"),
+            new TestCaseData("at NUnit.Tests.Assemblies.MockTestFixture.MethodThrowsException()"),
+            new TestCaseData("at NUnit.Tests.Assemblies.MockTestFixture.TestWithException()"),
+            new TestCaseData("Tests not run:"),
+            new TestCaseData("1) NUnit.Tests.Assemblies.MockTestFixture.MockTest4 : ignoring this test method for now"),
+            new TestCaseData("2) NUnit.Tests.Assemblies.MockTestFixture.MockTest5 : Method is not public"),
+            new TestCaseData("3) NUnit.Tests.Assemblies.MockTestFixture.NotRunnableTest : No arguments were provided"),
+            new TestCaseData("4) NUnit.Tests.BadFixture.SomeTest : No suitable constructor was found"),
+            new TestCaseData("5) NUnit.Tests.IgnoredFixture.Test1 : "),
+            new TestCaseData("6) NUnit.Tests.IgnoredFixture.Test2 : "),
+            new TestCaseData("7) NUnit.Tests.IgnoredFixture.Test3 : ")
         };
 
-        [TestCaseSource("ExpectedLines")]
-        public void CheckReport(int line, string text)
+        [TestCaseSource("ExpectedText")]
+        public void CheckReport(string text)
         {
-            Assert.That(ReportLines[line], Is.EqualTo(text));
+            Assert.That(Report, Contains.Substring(text));
         }
     }
 }

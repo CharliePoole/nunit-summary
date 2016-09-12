@@ -21,11 +21,12 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace NUnit.Extras.Tests
 {
-    public abstract class XmlTransformerTests
+    public abstract class ReportCreationTests
     {
         protected const string INPUT_DIR = "../../input";
         protected const string REPORT_DIR = "../../reports";
@@ -66,6 +67,10 @@ namespace NUnit.Extras.Tests
         }
 
         private string _report;
+        /// <summary>
+        /// Returns the full text of the created report as a string,
+        /// For use in tests that examine the full report as a string.
+        /// </summary>
         protected string Report
         {
             get
@@ -78,6 +83,10 @@ namespace NUnit.Extras.Tests
         }
 
         private string[] _reportLines;
+        /// <summary>
+        /// Returns the full text of the created report as an array of lines.
+        /// For use in tests that examine the full report, line by line.
+        /// </summary>
         protected string[] ReportLines
         {
             get
@@ -86,6 +95,24 @@ namespace NUnit.Extras.Tests
                     _reportLines = File.ReadAllLines(_output);
 
                 return _reportLines;
+            }
+        }
+
+        private static Regex _htmlStripper = new Regex("<.*?>", RegexOptions.Compiled);
+
+        private string _strippedReport;
+        /// <summary>
+        /// Returns the full text of the created report stripped of all HTML.
+        /// For use in tests that examine the full report, ignoring HTML.
+        /// </summary>
+        protected string StrippedReport
+        {
+            get
+            {
+                if (_strippedReport == null)
+                    _strippedReport = _htmlStripper.Replace(Report, "");
+
+                return _strippedReport;
             }
         }
     }

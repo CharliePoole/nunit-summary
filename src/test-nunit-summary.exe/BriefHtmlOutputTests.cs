@@ -20,11 +20,13 @@
 // ***********************************************************************
 
 using System;
+using System.Text.RegularExpressions;
+using System.Xml;
 using NUnit.Framework;
 
 namespace NUnit.Extras.Tests
 {
-    public class BriefHtmlOutputTests : XmlTransformerTests
+    public class BriefHtmlOutputTests : ReportCreationTests
     {
         protected override string Input
         {
@@ -41,25 +43,23 @@ namespace NUnit.Extras.Tests
             get { return "-brief -html"; }
         }
 
-        static TestCaseData[] ExpectedLines = new TestCaseData[]
+        static TestCaseData[] ExpectedText = new TestCaseData[]
         {
-            new TestCaseData(0, "<html>"),
-            new TestCaseData(1, "<body>"),
-            new TestCaseData(2, @"<b>C:\Program Files\NUnit 2.6.4\bin\tests\mock-assembly.dll</b><br><br>"),
-            new TestCaseData(3, ""),
-            new TestCaseData(4, "<b>NUnit Version:</b> 2.6.4.14350&nbsp;&nbsp;&nbsp;<b>Date:</b> 2016-09-10&nbsp;&nbsp;&nbsp;<b>Time:</b> 11:13:55<br><br>"),
-            new TestCaseData(5, ""),
-            new TestCaseData(6, "<b>Runtime Environment -</b><br>"),
-            new TestCaseData(7, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>OS Version:</b> Microsoft Windows NT 6.2.9200.0<br>"),
-            new TestCaseData(8, "&nbsp;&nbsp;&nbsp;<b>CLR Version:</b> " + Environment.Version + "<br><br>"),
-            new TestCaseData(9, ""),
-            new TestCaseData(10, "<b>Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds<br>&nbsp;&nbsp;&nbsp;Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0</b><br><br>")
+            new TestCaseData(@"C:\Program Files\NUnit 2.6.4\bin\tests\mock-assembly.dll"),
+            new TestCaseData("NUnit Version: 2.6.4.14350"),
+            new TestCaseData("Date: 2016-09-10"),
+            new TestCaseData("Time: 11:13:55"),
+            new TestCaseData("Runtime Environment -"),
+            new TestCaseData("OS Version: Microsoft Windows NT 6.2.9200.0"),
+            new TestCaseData("CLR Version: " + Environment.Version),
+            new TestCaseData("Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds"),
+            new TestCaseData("Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0")
         };
 
-        [TestCaseSource("ExpectedLines")]
-        public void CheckReport(int line, string text)
+        [TestCaseSource("ExpectedText")]
+        public void CheckReportContent(string text)
         {
-            Assert.That(ReportLines[line], Is.EqualTo(text));
+            Assert.That(StrippedReport, Contains.Substring(text));
         }
     }
 }

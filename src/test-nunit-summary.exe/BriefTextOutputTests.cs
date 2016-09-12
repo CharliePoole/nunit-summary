@@ -24,7 +24,7 @@ using NUnit.Framework;
 
 namespace NUnit.Extras.Tests
 {
-    public class BriefTextOutputTests : XmlTransformerTests
+    public class BriefTextOutputTests : ReportCreationTests
     {
         protected override string Input
         {
@@ -41,24 +41,21 @@ namespace NUnit.Extras.Tests
             get { return "-brief"; }
         }
 
-        static TestCaseData[] ExpectedLines = new TestCaseData[]
+        static TestCaseData[] ExpectedText = new TestCaseData[]
         {
-            new TestCaseData(0, @"***** C:\Program Files\NUnit 2.6.4\bin\tests\mock-assembly.dll"),
-            new TestCaseData(1, ""),
-            new TestCaseData(2, "NUnit Version 2.6.4.14350  2016-09-10  11:13:55"),
-            new TestCaseData(3, ""),
-            new TestCaseData(4, "Runtime Environment -"),
-            new TestCaseData(5, "   OS Version: Microsoft Windows NT 6.2.9200.0"),
-            new TestCaseData(6, "  CLR Version: " + Environment.Version),
-            new TestCaseData(7, ""),
-            new TestCaseData(8, "Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds"),
-            new TestCaseData(9, "  Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0")
+            new TestCaseData(@"C:\Program Files\NUnit 2.6.4\bin\tests\mock-assembly.dll"),
+            new TestCaseData("NUnit Version 2.6.4.14350  2016-09-10  11:13:55"),
+            new TestCaseData("Runtime Environment -"),
+            new TestCaseData("   OS Version: Microsoft Windows NT 6.2.9200.0"),
+            new TestCaseData("  CLR Version: " + Environment.Version),
+            new TestCaseData("Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds"),
+            new TestCaseData("  Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0")
         };
 
-        [TestCaseSource("ExpectedLines")]
-        public void CheckReport(int line, string text)
+        [TestCaseSource("ExpectedText")]
+        public void CheckReportContent(string text)
         {
-            Assert.That(ReportLines[line], Is.EqualTo(text));
+            Assert.That(Report, Contains.Substring(text));
         }
     }
 }
