@@ -26,7 +26,7 @@ using System.Text;
 
 namespace NUnit.Extras
 {
-    class XmlTransformerOptions
+    public class XmlTransformerOptions
     {
         #region Constructor
 
@@ -38,38 +38,35 @@ namespace NUnit.Extras
                 ? "-/"
                 : "-";
 
-            try
-            {
-                foreach (string arg in args)
-                    if (optionChars.IndexOf(arg[0]) >= 0)
-                        ProcessOption(arg);
-                    else if (IsWildCardPattern(arg))
-                        ProcessWildCardPattern(arg);
-                    else
-                        Input.Add(arg);
+            foreach (string arg in args)
+                if (optionChars.IndexOf(arg[0]) >= 0)
+                    ProcessOption(arg);
+                else if (IsWildCardPattern(arg))
+                    ProcessWildCardPattern(arg);
+                else
+                    Input.Add(arg);
 
-                if (Input.Count == 0)
-                    Input.Add("TestResult.xml");
-            }
-            catch (XmlTransformerOptionsException xcp)
-            {
-                Console.Error.WriteLine(xcp.Message);
-                Error = true;
-                Usage();
-            }
+            if (Input.Count == 0)
+                Input.Add("TestResult.xml");
         }
 
         #endregion
 
         #region Properties
 
-        public bool Error { get; private set; }
+        public bool Error { get { return _errors.Count > 0; } }
+
+        private List<string> _errors = new List<string>();
+        public IEnumerable<string> Errors { get { return _errors; } }
 
         public bool Help { get; private set; }
 
         public bool Html { get; private set; }
 
-        public bool MultipleOutput { get; private set; }
+        public bool MultipleOutput
+        {
+            get { return Output != null && Path.GetFileNameWithoutExtension(Output) == "*"; }
+        }
 
         public bool NoHeader { get; private set; }
 
@@ -93,26 +90,24 @@ namespace NUnit.Extras
             switch (opt[0])
             {
                 case "xsl":
-                    if (opt.Length != 2)
-                    {
-                        throw new XmlTransformerOptionsException("You must specify a file name for -xsl option!");
-                    }
-                    Transform = opt[1];
+                    if (opt.Length != 2 || string.IsNullOrEmpty(opt[1]))
+                        _errors.Add("You must specify a file name for -xsl option!");
+                    else
+                        Transform = opt[1];
                     break;
                 case "o":
                 case "out":
-                    if (opt.Length != 2)
+                    if (opt.Length != 2 || string.IsNullOrEmpty(opt[1]))
+                        _errors.Add("You must specify a filename for the -out option!");
+                    else
                     {
-                        throw new XmlTransformerOptionsException("You must specify a file name for -out option!");
+                        Output = opt[1];
+                        string ext = Path.GetExtension(Output);
+                        if (ext == ".html" || ext == ".htm")
+                            Html = true;
                     }
-                    Output = opt[1];
-                    MultipleOutput = Path.GetFileNameWithoutExtension(Output) == "*";
-                    string ext = Path.GetExtension(Output);
-                    if (ext == ".html" || ext == ".htm")
-                        Html = true;
                     break;
                 case "help":
-                    Usage();
                     Help = true;
                     break;
                 case "noheader":
@@ -125,7 +120,8 @@ namespace NUnit.Extras
                     Brief = true;
                     break;
                 default:
-                    throw new XmlTransformerOptionsException(String.Format("Invalid option: {0}", arg));
+                    _errors.Add(string.Format("Invalid option: {0}", arg));
+                    break;
             }
         }
 
@@ -190,7 +186,7 @@ namespace NUnit.Extras
             return name.IndexOfAny(new char[] { '*', '?' }) >= 0;
         }
 
-        private void Usage()
+        public void ShowHelp()
         {
             Console.Error.WriteLine("Usage is: nunit-transform inputFile [options]");
             Console.Error.WriteLine();
@@ -232,13 +228,5 @@ namespace NUnit.Extras
         }
         
         #endregion
-    }
-
-    internal class XmlTransformerOptionsException : Exception
-    {
-        public XmlTransformerOptionsException(string message)
-            : base(message)
-        {
-        }
     }
 }
