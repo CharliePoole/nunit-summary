@@ -32,7 +32,6 @@ namespace NUnit.Extras
 	public class XmlTransformer
 	{
         private XmlTransformerOptions _options;
-        private XslCompiledTransform _xform;
 
         public void Execute(string[] args)
         {
@@ -57,9 +56,12 @@ namespace NUnit.Extras
                 }
                 else
                 {
-                    var dir = Path.GetDirectoryName(_options.Output);
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+                    if (!string.IsNullOrEmpty(_options.Output))
+                    {
+                        var dir = Path.GetDirectoryName(_options.Output);
+                        if (!Directory.Exists(dir))
+                            Directory.CreateDirectory(dir);
+                    }
 
                     if (_options.MultipleOutput)
                         TransformToMultipleOutputFiles();
@@ -70,45 +72,81 @@ namespace NUnit.Extras
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Error: {0}", ex.Message);
+                throw;
             }
         }
 
-        public XslCompiledTransform XForm
+        private XslCompiledTransform _userTransform;
+        public XslCompiledTransform UserTransform
         {
             get
             {
-                if (_xform == null)
+                if (_userTransform == null && _options.Transform != null)
                 {
-                    _xform = new XslCompiledTransform();
-
-                    if (_options.Transform != null)
-                        _xform.Load(_options.Transform);
-                    else
-                    {
-                        string transform;
-
-                        if (_options.Brief)
-                            if (_options.Html)
-                                transform = "HtmlSummary-v2.xslt";
-                            else
-                                transform = "BriefSummary-v2.xslt";
-                        else
-                            if (_options.Html)
-                            transform = "HtmlTransform-v2.xslt";
-                        else
-                            transform = "DefaultTransform-v2.xslt";
-
-                        Assembly assembly = Assembly.GetExecutingAssembly();
-                        Stream stream = assembly.GetManifestResourceStream("NUnit.Extras.Transforms." + transform);
-                        if (stream == null)
-                            throw new Exception("Transform not found: " + transform);
-
-                        _xform.Load(new XmlTextReader(stream));
-                    }
+                    _userTransform = new XslCompiledTransform();
+                    _userTransform.Load(_options.Transform);
                 }
 
-                return _xform;
+                return _userTransform;
             }
+        }
+
+        private XslCompiledTransform _internalV2Transform;
+        public XslCompiledTransform InternalV2Transform
+        {
+            get
+            {
+                if (_internalV2Transform == null)
+                {
+                    string transform = _options.Brief
+                        ? _options.Html
+                            ? "HtmlSummary-v2.xslt"
+                            : "BriefSummary-v2.xslt"
+                        : _options.Html
+                            ? "HtmlTransform-v2.xslt"
+                            : "DefaultTransform-v2.xslt";
+
+                    _internalV2Transform = LoadInternalTransform(transform);
+                }
+
+                return _internalV2Transform;
+            }
+        }
+
+        private XslCompiledTransform _internalV3Transform;
+        public XslCompiledTransform InternalV3Transform
+        {
+            get
+            {
+                if (_internalV3Transform == null)
+                {
+                    string transform = _options.Brief
+                        ? _options.Html
+                            ? "HtmlSummary-v3.xslt"
+                            : "BriefSummary-v3.xslt"
+                        : _options.Html
+                            ? "HtmlTransform-v3.xslt"
+                            : "DefaultTransform-v3.xslt";
+
+                    _internalV3Transform = LoadInternalTransform(transform);
+                }
+
+                return _internalV3Transform;
+            }
+        }
+
+        private XslCompiledTransform LoadInternalTransform(string transform)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream stream = assembly.GetManifestResourceStream("NUnit.Extras.Transforms." + transform);
+
+            if (stream == null)
+                throw new Exception("Transform not found: " + transform);
+
+            var xform = new XslCompiledTransform();
+            xform.Load(new XmlTextReader(stream));
+
+            return xform;
         }
 
         private void TransformToMultipleOutputFiles()
@@ -123,7 +161,9 @@ namespace NUnit.Extras
                 if (_options.Html && !_options.NoHeader)
                     WriteHtmlHeader(output);
 
-                XForm.Transform(inputFile, null, output);
+                var doc = new XmlDocument();
+                doc.Load(inputFile);
+                TransformResult(doc, output);
 
                 if (_options.Html && !_options.NoHeader)
                     WriteHtmlTrailer(output);
@@ -137,26 +177,49 @@ namespace NUnit.Extras
         {
             TextWriter output = Console.Out;
 
-            if (_options.Output != null)
+            try
             {
-                output = new StreamWriter(_options.Output);
+                if (_options.Output != null)
+                {
+                    output = new StreamWriter(_options.Output);
+                    if (_options.Html && !_options.NoHeader)
+                        WriteHtmlHeader(output);
+                }
+
+                foreach (string inputFile in _options.Input)
+                {
+                    var doc = new XmlDocument();
+                    doc.Load(inputFile);
+                    TransformResult(doc, output);
+                }
+
                 if (_options.Html && !_options.NoHeader)
-                    WriteHtmlHeader(output);
-            }
+                    WriteHtmlTrailer(output);
 
-            foreach (string inputFile in _options.Input)
+                if (_options.Output != null)
+                    Console.Error.WriteLine("Output saved as {0}", Path.GetFullPath(_options.Output));
+            }
+            finally
             {
-                XForm.Transform(inputFile, null, output);
+                if (_options.Output != null)
+                    output.Close();
             }
+        }
 
-            if (_options.Html && !_options.NoHeader)
-                WriteHtmlTrailer(output);
+        private void TransformResult(XmlDocument doc, TextWriter output)
+        {
+            var xform = _options.Transform != null
+                ? UserTransform
+                : IsV2Result(doc)
+                    ? InternalV2Transform
+                    : InternalV3Transform;
 
-            if (_options.Output != null)
-            {
-                Console.Error.WriteLine("Output saved as {0}", Path.GetFullPath(_options.Output));
-                output.Close();
-            }
+            xform.Transform(doc, null, output);
+        }
+
+        private static bool IsV2Result(XmlDocument doc)
+        {
+            return doc.DocumentElement.Name == "test-results";
         }
 
         private static void WriteHtmlHeader(TextWriter output)
