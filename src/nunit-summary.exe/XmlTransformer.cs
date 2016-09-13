@@ -161,9 +161,7 @@ namespace NUnit.Extras
                 if (_options.Html && !_options.NoHeader)
                     WriteHtmlHeader(output);
 
-                var doc = new XmlDocument();
-                doc.Load(inputFile);
-                TransformResult(doc, output);
+                TransformResult(inputFile, output);
 
                 if (_options.Html && !_options.NoHeader)
                     WriteHtmlTrailer(output);
@@ -188,9 +186,7 @@ namespace NUnit.Extras
 
                 foreach (string inputFile in _options.Input)
                 {
-                    var doc = new XmlDocument();
-                    doc.Load(inputFile);
-                    TransformResult(doc, output);
+                    TransformResult(inputFile, output);
                 }
 
                 if (_options.Html && !_options.NoHeader)
@@ -206,15 +202,19 @@ namespace NUnit.Extras
             }
         }
 
-        private void TransformResult(XmlDocument doc, TextWriter output)
+        private void TransformResult(string inputFile, TextWriter output)
         {
-            var xform = _options.Transform != null
-                ? UserTransform
-                : IsV2Result(doc)
-                    ? InternalV2Transform
-                    : InternalV3Transform;
-
-            xform.Transform(doc, null, output);
+            if (_options.Transform != null) // User-supplied transform
+                UserTransform.Transform(inputFile, XmlWriter.Create(output));
+            else // Select internal transform
+            {
+                var doc = new XmlDocument();
+                doc.Load(inputFile);
+                if (IsV2Result(doc))
+                    InternalV2Transform.Transform(doc, null, output);
+                else
+                    InternalV3Transform.Transform(doc, null, output);
+            }
         }
 
         private static bool IsV2Result(XmlDocument doc)
