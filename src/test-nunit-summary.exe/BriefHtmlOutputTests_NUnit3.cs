@@ -19,23 +19,20 @@
 // THE SOFTWARE.
 // ***********************************************************************
 
-using System;
-using System.Text.RegularExpressions;
-using System.Xml;
 using NUnit.Framework;
 
 namespace NUnit.Extras.Tests
 {
-    public class BriefHtmlOutputTests : ReportCreationTests
+    public class BriefHtmlOutputTests_NUnit3 : ReportCreationTests
     {
         protected override string Input
         {
-            get { return "MockAssemblyTestResult-2.6.4.xml"; }
+            get { return "MockAssemblyTestResult-3.5.0.xml"; }
         }
 
         protected override string Output
         {
-            get { return "MockAssemblyBriefSummary-2.6.4.html"; }
+            get { return "MockAssemblyBriefSummary-3.5.0.html"; }
         }
 
         protected override string Options
@@ -43,23 +40,24 @@ namespace NUnit.Extras.Tests
             get { return "-brief -html"; }
         }
 
-        static TestCaseData[] ExpectedText = new TestCaseData[]
+        static string[] ExpectedText = new string[]
         {
-            new TestCaseData(@"C:\Program Files\NUnit 2.6.4\bin\tests\mock-assembly.dll"),
-            new TestCaseData("NUnit Version: 2.6.4.14350"),
-            new TestCaseData("Date: 2016-09-10"),
-            new TestCaseData("Time: 11:13:55"),
-            new TestCaseData("Runtime Environment -"),
-            new TestCaseData("OS Version: Microsoft Windows NT 6.2.9200.0"),
-            new TestCaseData("CLR Version: " + Environment.Version),
-            new TestCaseData("Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds"),
-            new TestCaseData("Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0")
+            "OS Version:( *)Microsoft Windows NT 10.0.10586.0",
+            "CLR Version:( *)4.0.30319.42000",
+            "NUnit Version:( *)3.5.0.0",
+            "Overall result:( *)Failed",
+            "Test Count:( *)28, Passed: 15, Failed: 5, Inconclusive: 1, Skipped: 7",
+            "Failed Tests:( *)Failures: 1, Errors: 1, Invalid: 3",
+            "Skipped Tests:( *)Ignored: 4, Explicit: 3, Other: 0",
+            "Start time:( *)2016-09-12 03:27:40Z",
+            "End time:( *)2016-09-12 03:27:42Z",
+            "Duration:( *)1.701 seconds"
         };
 
         [TestCaseSource("ExpectedText")]
         public void CheckReportContent(string text)
         {
-            Assert.That(StrippedReport, Contains.Substring(text));
+            Assert.That(StrippedReport, Does.Match(text));
         }
     }
 }
