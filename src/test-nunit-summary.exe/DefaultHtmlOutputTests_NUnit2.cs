@@ -24,7 +24,7 @@ using NUnit.Framework;
 
 namespace NUnit.Extras.Tests
 {
-    public class DefaultHtmlOutputTests : ReportCreationTests
+    public class DefaultHtmlOutputTests_NUnit2 : ReportCreationTests
     {
         protected override string Input
         {

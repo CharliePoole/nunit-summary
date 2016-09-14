@@ -49,11 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefaultHtmlOutputTests.cs" />
-    <Compile Include="BriefHtmlOutputTests.cs" />
+    <Compile Include="BriefHtmlOutputTests_NUnit3.cs" />
+    <Compile Include="DefaultHtmlOutputTests_NUnit2.cs" />
+    <Compile Include="BriefHtmlOutputTests_NUnit2.cs" />
     <Compile Include="ReportCreationTests.cs" />
-    <Compile Include="DefaultTextOutputTests.cs" />
-    <Compile Include="BriefTextOutputTests.cs" />
+    <Compile Include="DefaultTextOutputTests_NUnit2.cs" />
+    <Compile Include="BriefTextOutputTests_NUnit2.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlTransformerOptionsTests.cs" />
@@ -66,12 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="BriefHtmlOutput_ExpectedReport.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Program.vb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

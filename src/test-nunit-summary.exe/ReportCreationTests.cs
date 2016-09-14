@@ -102,7 +102,8 @@ namespace NUnit.Extras.Tests
 
         private string _strippedReport;
         /// <summary>
-        /// Returns the full text of the created report stripped of all HTML.
+        /// Returns the full text of the created report stripped of all HTML
+        /// and with Newlines replaced by a single space.
         /// For use in tests that examine the full report, ignoring HTML.
         /// </summary>
         protected string StrippedReport
@@ -110,7 +111,7 @@ namespace NUnit.Extras.Tests
             get
             {
                 if (_strippedReport == null)
-                    _strippedReport = _htmlStripper.Replace(Report, "");
+                    _strippedReport = _htmlStripper.Replace(Report, "").Replace(Environment.NewLine, " ");
 
                 return _strippedReport;
             }
