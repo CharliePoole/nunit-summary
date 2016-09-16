@@ -101,7 +101,10 @@ Task("Build")
     .IsDependentOn("NuGetRestore")
     .Does(() =>
     {
-        BuildSolution(SOLUTION_FILE, configuration);
+		DotNetBuild(SOLUTION_FILE, settings =>
+			settings.SetConfiguration(configuration)
+					.SetVerbosity(Verbosity.Minimal)
+					.WithTarget("Build"));
     });
 
 //////////////////////////////////////////////////////////////////////
@@ -128,20 +131,6 @@ Task("Test")
 			throw new CakeException(message);
 		}
 	});
-
-//////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////
-
-void BuildSolution(string solutionPath, string configuration)
-{
-	MSBuild(solutionPath, new MSBuildSettings()
-		.SetConfiguration(configuration)
-        .SetMSBuildPlatform(MSBuildPlatform.x86)
-		.SetVerbosity(Verbosity.Minimal)
-		.SetNodeReuse(false)
-	);
-}
 
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS

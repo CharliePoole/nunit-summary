@@ -1,0 +1,9 @@
+language: csharp
+sudo: false
+mono:
+  - latest
+os:
+  - linux
+  - osx
+script:
+  - ./build.sh --target "Travis"
