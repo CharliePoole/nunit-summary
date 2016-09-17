@@ -28,8 +28,7 @@ namespace NUnit.Extras.Tests
 {
     public abstract class ReportCreationTests
     {
-        protected const string INPUT_DIR = "../../input";
-        protected const string REPORT_DIR = "../../reports";
+        protected static readonly string REPORT_DIR = Path.Combine(TestContext.CurrentContext.TestDirectory, "TestReports");
 
         protected abstract string Input { get; }
         protected abstract string Output { get; }
@@ -44,7 +43,7 @@ namespace NUnit.Extras.Tests
 
             var input = Input;
             if (!Path.IsPathRooted(input))
-                input = Path.Combine(INPUT_DIR, input);
+                input = Path.Combine(TestContext.CurrentContext.TestDirectory, input);
 
             _output = Output;
             if (!Path.IsPathRooted(_output))

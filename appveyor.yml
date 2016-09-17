@@ -1,0 +1,12 @@
+version: 0.4.{build}
+image: Visual Studio 2015
+
+build_script:
+  - ps: .\build.ps1 -Target "Appveyor"
+
+# disable built-in tests.
+test: off
+
+artifacts:
+- path: package\*.nupkg
+- path: package\*.zip

@@ -28,7 +28,7 @@ namespace NUnit.Extras.Tests
     {
         protected override string Input
         {
-            get { return "MockAssemblyTestResult-2.6.4.xml"; }
+            get { return "TestInput/MockAssemblyTestResult-2.6.4.xml"; }
         }
 
         protected override string Output
@@ -47,7 +47,7 @@ namespace NUnit.Extras.Tests
             new TestCaseData("NUnit Version 2.6.4.14350  2016-09-10  11:13:55"),
             new TestCaseData("Runtime Environment -"),
             new TestCaseData("   OS Version: Microsoft Windows NT 6.2.9200.0"),
-            new TestCaseData("  CLR Version: " + Environment.Version),
+            new TestCaseData("  CLR Version: 2.0.50727.8689"),
             new TestCaseData("Tests run: 21, Errors: 1, Failures: 1, Inconclusive: 1, Time: 0.088 seconds"),
             new TestCaseData("  Not run: 7, Invalid: 3, Ignored: 4, Skipped: 0"),
             new TestCaseData("Failures:"),

@@ -27,7 +27,7 @@ namespace NUnit.Extras.Tests
     {
         protected override string Input
         {
-            get { return "MockAssemblyTestResult-3.5.0.xml"; }
+            get { return "TestInput/MockAssemblyTestResult-3.5.0.xml"; }
         }
 
         protected override string Output
