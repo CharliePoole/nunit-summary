@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BriefHtmlOutputTests_NUnit3.cs" />
+    <Compile Include="MultipleInputSingleOutputTest.cs" />
     <Compile Include="DefaultHtmlOutputTests_NUnit2.cs" />
     <Compile Include="BriefHtmlOutputTests_NUnit2.cs" />
     <Compile Include="ReportCreationTests.cs" />
@@ -73,6 +74,27 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestInput\MockAssemblyTestResult-3.5.0.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\TestResult-2.2.10.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\TestResult-2.4.8.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\TestResult-2.5.10.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\TestResult-2.5.2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\TestResult-2.6.0.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\TestResult-2.6.2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\TestResult-2.6.4.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
