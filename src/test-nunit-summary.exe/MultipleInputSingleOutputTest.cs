@@ -101,20 +101,6 @@ namespace NUnit.Extras.Tests
         [TestCaseSource("ExpectedText")]
         public void CheckReportContent(int lineno, string text)
         {
-            //int count = 0;
-            //int index = 0;
-            //for (;;)
-            //{
-            //    index = Report.IndexOf(text, index);
-            //    if (index < 0) break;
-
-            //    count++;
-
-            //    index += text.Length;
-            //    if (index >= Report.Length) break;
-            //}
-
-            //Assert.That(count, Is.EqualTo(expectedCount), "Error finding text \"" + text + "\"");
             Assert.That(ReportLines[lineno], Contains.Substring(text));
         }
     }
