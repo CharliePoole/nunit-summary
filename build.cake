@@ -132,6 +132,29 @@ Task("Test")
 	});
 
 //////////////////////////////////////////////////////////////////////
+// PACKAGE
+//////////////////////////////////////////////////////////////////////
+
+Task("CreatePackageDir")
+	.Does(() =>
+	{
+		CreateDirectory(PACKAGE_DIR);
+	});
+
+Task("Package")
+	.IsDependentOn("Build")
+	.Does(() =>
+	{
+		CreateDirectory(PACKAGE_IMAGE_DIR);
+		CleanDirectory(PACKAGE_IMAGE_DIR);
+
+		CopyFileToDirectory("LICENSE.txt", PACKAGE_IMAGE_DIR);
+		CopyFileToDirectory(BIN_DIR + "nunit-summary.exe", PACKAGE_IMAGE_DIR);
+
+		Zip(PACKAGE_IMAGE_DIR, File(PACKAGE_DIR + packageName + ".zip"));
+	});
+
+//////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
 
@@ -141,7 +164,8 @@ Task("Rebuild")
 
 Task("Appveyor")
 	.IsDependentOn("Build")
-	.IsDependentOn("Test");
+	.IsDependentOn("Test")
+	.IsDependentOn("Package");
 
 Task("Travis")
 	.IsDependentOn("Build")
